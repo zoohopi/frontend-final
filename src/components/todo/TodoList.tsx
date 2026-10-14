@@ -5,7 +5,14 @@ import { RootState } from '@/store';
 import { db } from '@/lib/firebase';
 import { Todo } from '@/types/todo';
 // 💡 import할 Firestore 함수: collection, query, orderBy, onSnapshot, updateDoc, doc
-import {} from 'firebase/firestore';
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  updateDoc,
+  doc,
+} from 'firebase/firestore';
 
 export default function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -16,12 +23,18 @@ export default function TodoList() {
   //    가져온 데이터를 setTodos로 업데이트하세요.
   //    컴포넌트 언마운트 시 구독을 해제하는 클린업 함수를 return하세요.
   useEffect(() => {
-    /* 코드를 작성하세요 */
+    const q = query(collection(db, 'todos'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setTodos(
+        snapshot.docs.map((d) => ({ id: d.id, ...d.data() }) as Todo),
+      );
+    });
+    return () => unsubscribe();
   }, []);
 
   // 💡 [과제 6] 완료/미완료 토글 — updateDoc으로 isDone 값을 반전시키세요.
   const handleToggle = async (todo: Todo) => {
-    /* 코드를 작성하세요 */
+    await updateDoc(doc(db, 'todos', todo.id), { isDone: !todo.isDone });
   };
 
   // 💡 [추가 과제 1] deleteDoc으로 할 일을 삭제하는 함수를 작성하고,

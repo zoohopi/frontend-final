@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { db } from '@/lib/firebase';
 // 💡 [과제 5-hint] addDoc, collection, serverTimestamp를 import하세요.
-import {} from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 
 export default function TodoInput() {
   const [text, setText] = useState('');
@@ -12,7 +12,11 @@ export default function TodoInput() {
     if (text.trim() === '') return;
 
     // 💡 [과제 5] "todos" 컬렉션에 { text, isDone: false, createdAt: serverTimestamp() }를 저장하세요.
-    /* 코드를 작성하세요 */
+    await addDoc(collection(db, 'todos'), {
+      text,
+      isDone: false,
+      createdAt: serverTimestamp(),
+    });
 
     setText('');
   };
